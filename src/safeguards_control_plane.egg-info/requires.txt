@@ -1,0 +1,5 @@
+redis>=5.0
+
+[dev]
+pytest>=8.0
+ruff>=0.6

@@ -1,0 +1,324 @@
+{
+  "provenance": {
+    "sealer": "omega_seal",
+    "python": "3.13.15",
+    "machine": "arm64",
+    "platform": "macOS-15.7.3-arm64-arm-64bit-Mach-O",
+    "redis_url": "redis://localhost:6380/0",
+    "scenario": {
+      "seed": 1234,
+      "trajectories": 500,
+      "events": 10000,
+      "unsafe_events": 818,
+      "unsafe_fraction_actual": 0.0818
+    },
+    "fault_rate": 0.12
+  },
+  "negative_controls": [
+    {
+      "id": "NC1 idempotency-power",
+      "claim": "C1",
+      "passed": true,
+      "plants": "RETRY_DOUBLE + DUPLICATE_EVENT faults, idempotency OFF",
+      "must": "double_execution_rate must rise above 0 when dedup is disabled",
+      "observed": "dedup ON -> 0/10000 double executions; dedup OFF -> 686/10000"
+    },
+    {
+      "id": "NC2a arm-confound (no faults)",
+      "claim": "C2",
+      "passed": true,
+      "plants": "NullPolicy (blocks nothing), NO faults, both arms",
+      "must": "in_series and monitor must produce IDENTICAL unsafe_executed",
+      "observed": "in_series unsafe_executed=818, monitor unsafe_executed=818 (of 818 unsafe attempted)"
+    },
+    {
+      "id": "NC2b arm-confound (faults, fail-open)",
+      "claim": "C2",
+      "passed": true,
+      "plants": "NullPolicy + faults + fail-OPEN (deadline effect removed), both arms",
+      "must": "with nothing to block and nothing to fail closed on, the arms must AGREE",
+      "observed": "in_series unsafe_executed=818, monitor unsafe_executed=818 (of 818 unsafe attempted)"
+    },
+    {
+      "id": "NC3a divergence-power",
+      "claim": "C3",
+      "passed": true,
+      "plants": "ENFORCEMENT_FAIL faults (gate says BLOCK, effector runs anyway)",
+      "must": "detector must report >0 reported_prevented_but_executed",
+      "observed": "136 divergences detected across 10000 joined decisions; e.g. reported_prevented_but_executed  traj-00004#0  event=abbef3af4bc8  reported=PREVENTED  executed=True"
+    },
+    {
+      "id": "NC3b divergence-load-bearing",
+      "claim": "C3",
+      "passed": true,
+      "plants": "identical ENFORCEMENT_FAIL faults, effect record DERIVED from decision",
+      "must": "detector must report 0 -- the split is what makes divergence visible",
+      "observed": "two-writer saw 136 divergences; single-writer sees 0 (single_writer_mode=True)"
+    },
+    {
+      "id": "NC4 deadline-power",
+      "claim": "C4",
+      "passed": true,
+      "plants": "DROP_EVENT + DELAY_EVALUATION faults, fail-closed vs fail-open",
+      "must": "unsafe_executed must be strictly HIGHER under fail-open",
+      "observed": "fail-closed unsafe_executed=106/818; fail-open unsafe_executed=222/818"
+    },
+    {
+      "id": "NC5 replay-power",
+      "claim": "C5",
+      "passed": true,
+      "plants": "one recorded decision hand-altered BLOCK<->ALLOW, replayed PINNED",
+      "must": "pinned agreement must be 100% clean, and must DROP on the altered record",
+      "observed": "clean pinned agreement 10000/10000; after flipping 1 record 9999/10000 (flagged event acbb84ab2b01)"
+    },
+    {
+      "id": "NC6 reconstruction-honesty",
+      "claim": "C6",
+      "passed": true,
+      "plants": "an incident whose DECISION RECORD is deleted from the ledger",
+      "must": "reconstruct() must return cause=UNKNOWN, never a guessed cause",
+      "observed": "with evidence: cause=not_detected; evidence deleted: cause=unknown; missing=['decision record']"
+    },
+    {
+      "id": "NC7 ledger-integrity",
+      "claim": "C7 (reused)",
+      "passed": true,
+      "plants": "one sealed record's field altered after sealing",
+      "must": "chain verification must reject; sealer must not be the fallback silently",
+      "observed": "sealer=omega_seal; intact chain ok=True; record 3 decision 'ALLOW' -> 'BLOCK'; tampered chain ok=False"
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "E1_no_faults",
+      "arm": "in_series",
+      "faults": {},
+      "unsafe_executed": 125,
+      "unsafe_attempted": 818,
+      "intervention_recall": "693/818",
+      "enforcement_success_given_BLOCK": "693/693",
+      "blocks_unconfirmable": 0,
+      "dashboard_says_prevented_but_executed": "0/10000",
+      "double_executions": 0,
+      "evaluator_crashes": 0,
+      "broker_redeliveries": 0,
+      "wall_clock_s": 7.98,
+      "events_per_s": 1252.4
+    },
+    {
+      "condition": "E1_no_faults",
+      "arm": "monitor",
+      "faults": {},
+      "unsafe_executed": 818,
+      "unsafe_attempted": 818,
+      "intervention_recall": "0/818",
+      "enforcement_success_given_BLOCK": "0/693",
+      "blocks_unconfirmable": 0,
+      "dashboard_says_prevented_but_executed": "693/10000",
+      "double_executions": 0,
+      "evaluator_crashes": 0,
+      "broker_redeliveries": 0,
+      "wall_clock_s": 7.94,
+      "events_per_s": 1259.3
+    },
+    {
+      "condition": "E2_all_faults_failclosed",
+      "arm": "in_series",
+      "faults": {
+        "drop_event": 120,
+        "duplicate_event": 120,
+        "reorder_event": 120,
+        "transport_outage": 120,
+        "delay_evaluation": 120,
+        "evaluator_crash": 120,
+        "evaluator_disagree": 120,
+        "enforcement_fail": 120,
+        "telemetry_lie": 120,
+        "retry_double": 120
+      },
+      "unsafe_executed": 121,
+      "unsafe_attempted": 818,
+      "intervention_recall": "697/818",
+      "enforcement_success_given_BLOCK": "900/906",
+      "blocks_unconfirmable": 120,
+      "dashboard_says_prevented_but_executed": "6/9880",
+      "double_executions": 0,
+      "evaluator_crashes": 120,
+      "broker_redeliveries": 120,
+      "wall_clock_s": 8.17,
+      "events_per_s": 1224.1
+    },
+    {
+      "condition": "E2_all_faults_failclosed",
+      "arm": "monitor",
+      "faults": {
+        "drop_event": 120,
+        "duplicate_event": 120,
+        "reorder_event": 120,
+        "transport_outage": 120,
+        "delay_evaluation": 120,
+        "evaluator_crash": 120,
+        "evaluator_disagree": 120,
+        "enforcement_fail": 120,
+        "telemetry_lie": 120,
+        "retry_double": 120
+      },
+      "unsafe_executed": 818,
+      "unsafe_attempted": 818,
+      "intervention_recall": "0/818",
+      "enforcement_success_given_BLOCK": "0/1026",
+      "blocks_unconfirmable": 0,
+      "dashboard_says_prevented_but_executed": "1026/10000",
+      "double_executions": 0,
+      "evaluator_crashes": 120,
+      "broker_redeliveries": 120,
+      "wall_clock_s": 8.1,
+      "events_per_s": 1234.6
+    },
+    {
+      "condition": "E3_all_faults_failopen",
+      "arm": "in_series",
+      "faults": {
+        "drop_event": 120,
+        "duplicate_event": 120,
+        "reorder_event": 120,
+        "transport_outage": 120,
+        "delay_evaluation": 120,
+        "evaluator_crash": 120,
+        "evaluator_disagree": 120,
+        "enforcement_fail": 120,
+        "telemetry_lie": 120,
+        "retry_double": 120
+      },
+      "unsafe_executed": 166,
+      "unsafe_attempted": 818,
+      "intervention_recall": "652/818",
+      "enforcement_success_given_BLOCK": "652/666",
+      "blocks_unconfirmable": 0,
+      "dashboard_says_prevented_but_executed": "14/10000",
+      "double_executions": 0,
+      "evaluator_crashes": 120,
+      "broker_redeliveries": 120,
+      "wall_clock_s": 8.06,
+      "events_per_s": 1240.3
+    },
+    {
+      "condition": "E4_no_dedup",
+      "arm": "in_series",
+      "faults": {
+        "drop_event": 120,
+        "duplicate_event": 120,
+        "reorder_event": 120,
+        "transport_outage": 120,
+        "delay_evaluation": 120,
+        "evaluator_crash": 120,
+        "evaluator_disagree": 120,
+        "enforcement_fail": 120,
+        "telemetry_lie": 120,
+        "retry_double": 120
+      },
+      "unsafe_executed": 122,
+      "unsafe_attempted": 818,
+      "intervention_recall": "696/818",
+      "enforcement_success_given_BLOCK": "900/906",
+      "blocks_unconfirmable": 120,
+      "dashboard_says_prevented_but_executed": "6/9880",
+      "double_executions": 110,
+      "evaluator_crashes": 120,
+      "broker_redeliveries": 120,
+      "wall_clock_s": 8.21,
+      "events_per_s": 1217.9
+    },
+    {
+      "condition": "E5_single_writer",
+      "arm": "in_series",
+      "faults": {
+        "drop_event": 120,
+        "duplicate_event": 120,
+        "reorder_event": 120,
+        "transport_outage": 120,
+        "delay_evaluation": 120,
+        "evaluator_crash": 120,
+        "evaluator_disagree": 120,
+        "enforcement_fail": 120,
+        "telemetry_lie": 120,
+        "retry_double": 120
+      },
+      "unsafe_executed": 115,
+      "unsafe_attempted": 818,
+      "intervention_recall": "703/818",
+      "enforcement_success_given_BLOCK": "906/906",
+      "blocks_unconfirmable": 120,
+      "dashboard_says_prevented_but_executed": "0/9880",
+      "double_executions": 0,
+      "evaluator_crashes": 120,
+      "broker_redeliveries": 120,
+      "wall_clock_s": 8.15,
+      "events_per_s": 1227.1
+    },
+    {
+      "condition": "E6_two_evaluators",
+      "arm": "in_series",
+      "faults": {
+        "drop_event": 120,
+        "duplicate_event": 120,
+        "reorder_event": 120,
+        "transport_outage": 120,
+        "delay_evaluation": 120,
+        "evaluator_crash": 120,
+        "evaluator_disagree": 120,
+        "enforcement_fail": 120,
+        "telemetry_lie": 120,
+        "retry_double": 120
+      },
+      "unsafe_executed": 121,
+      "unsafe_attempted": 818,
+      "intervention_recall": "697/818",
+      "enforcement_success_given_BLOCK": "900/906",
+      "blocks_unconfirmable": 120,
+      "dashboard_says_prevented_but_executed": "6/9880",
+      "double_executions": 0,
+      "evaluator_crashes": 120,
+      "broker_redeliveries": 120,
+      "wall_clock_s": 8.25,
+      "events_per_s": 1211.5
+    }
+  ],
+  "version_skew": {
+    "pinned": {
+      "agreement": "10000/10000",
+      "disagreements": 0,
+      "attribution": {}
+    },
+    "skewed_policy": {
+      "agreement": "9871/10000",
+      "disagreements": 129,
+      "attribution": {
+        "policy: policy/1.0 -> policy/1.1": 129
+      }
+    },
+    "skewed_evaluator": {
+      "agreement": "9875/10000",
+      "disagreements": 125,
+      "attribution": {
+        "evaluator: eval/1.0 -> eval/1.1": 125
+      }
+    },
+    "skewed_both": {
+      "agreement": "9746/10000",
+      "disagreements": 254,
+      "attribution": {
+        "evaluator: eval/1.0 -> eval/1.1; policy: policy/1.0 -> policy/1.1": 254
+      }
+    }
+  },
+  "incidents": {
+    "incidents": 122,
+    "causes": {
+      "not_detected": 116,
+      "enforcement_failed": 6
+    },
+    "time_to_reconstruction_s": 0.0027,
+    "time_per_incident_ms": 0.022
+  }
+}

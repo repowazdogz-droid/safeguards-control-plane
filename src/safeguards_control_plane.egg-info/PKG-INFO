@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: safeguards-control-plane
+Version: 0.1.0
+Summary: A fault-injected testbed for agent safeguards infrastructure
+Requires-Python: >=3.11
+Requires-Dist: redis>=5.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Requires-Dist: ruff>=0.6; extra == "dev"
