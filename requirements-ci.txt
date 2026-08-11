@@ -1,0 +1,9 @@
+# Exact versions used to produce the results in CLAIMS.md, pinned so a clean
+# runner reproduces them. Generated from the development venv (uv pip freeze).
+# Transitive deps are pinned too; a resolver free to move them is not reproducible.
+iniconfig==2.3.0
+packaging==26.3
+pluggy==1.6.0
+pygments==2.20.0
+pytest==9.1.1
+redis==8.1.0

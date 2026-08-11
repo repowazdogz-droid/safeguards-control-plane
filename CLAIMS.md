@@ -115,23 +115,39 @@ measured rather than argued.**
 
 ### C5 — Replay under version skew ✅
 
-Strata reported separately, never pooled:
+**The claim is the ratio, not the count.** Pinned replay reproduces **100% of replayable
+decisions** (0 disagreements), and every skewed disagreement is attributed to a named version
+change with none left `UNATTRIBUTED`. Strata are reported separately, never pooled.
 
-| stratum | agreement | disagreements | attribution |
+| stratum | agreement (ratio — the claim) | disagreements | attribution |
 |---|---|---|---|
-| pinned | **10,000/10,000** | 0 | — |
-| skewed policy (1.0→1.1) | 9,871/10,000 | 129 | 129/129 attributed to the policy bump |
-| skewed evaluator (1.0→1.1) | 9,875/10,000 | 125 | 125/125 attributed to the evaluator bump |
-| skewed both | 9,746/10,000 | 254 | 254/254 attributed to both |
+| pinned | **100%** | **0** | — |
+| skewed policy (1.0→1.1) | 98.71% | **129** | 129/129 attributed to the policy bump |
+| skewed evaluator (1.0→1.1) | 98.75% | **125** | 125/125 attributed to the evaluator bump |
+| skewed both | 97.46% | **254** | 254/254 attributed to both |
 
-Pinned agreement at 100% establishes the decision path is deterministic. Every skewed
-disagreement is attributed to a named version change; none is `UNATTRIBUTED`.
+Counts from one observed run: 10,000/10,000 · 9,871/10,000 · 9,875/10,000 · 9,746/10,000.
+
+**Those denominators are one run's figure, not a fixed constant.** `replay()` admits only
+decisions that reached a policy verdict, and an event leaves that set when its measured
+wall-clock latency crosses the 25 ms deadline — which can happen under machine load with *no
+fault injected*. Observed locally: 9,995 admitted on one loaded run, 10,000 on five others.
+The ratio held at 100% in every case, including the 9,995 one. CI therefore asserts the ratio
+and the disagreement counts, and does not pin the denominator; see `LIMITATIONS.md` §11 for
+the unimplemented fix that would make the counts hard constants.
+
+*This wording is a correction.* The first version of this file published `10,000/10,000` as
+though it were reproducible. It is not, and the error was found by the CI assertion script
+classifying it as deterministic and then going red. The pre-registered property — "replay at
+pinned versions reproduces every recorded decision exactly" — was always the ratio, and that
+property held throughout.
 
 - **NC5 fired**: hand-flipping one recorded decision dropped pinned agreement to
   **9,999/10,000**. Replay recomputes from the event and compares; it never reads a stored
   agreement flag. This is the D087 defect made impossible.
 
-*Failure conditions (pinned agreement below 100%, or agreement on a corrupted record): neither occurred.*
+*Failure conditions (pinned agreement below 100% of replayable decisions, or agreement on a
+corrupted record): neither occurred.*
 
 ### C6 — Incident reconstruction from durable evidence ✅
 

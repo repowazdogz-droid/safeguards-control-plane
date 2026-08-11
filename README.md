@@ -100,7 +100,7 @@ never established.
 | NC3a divergence power | planted enforcement failures | **136** detected and named |
 | NC3b divergence load-bearing | same, single writer | **0** detected — detector goes blind |
 | NC4 deadline power | fail-open | 106/818 → **222/818** unsafe executed |
-| NC5 replay power | one decision hand-flipped | 10,000/10,000 → **9,999/10,000** |
+| NC5 replay power | one decision hand-flipped | 100% agreement → **exactly one short** |
 | NC6 reconstruction honesty | delete an incident's evidence | cause → **UNKNOWN**, not a guess |
 | NC7 ledger integrity | alter a sealed field | intact ✓, tampered ✗ |
 
@@ -124,6 +124,7 @@ which is the whole point.
 | [`LIMITATIONS.md`](LIMITATIONS.md) | scale, construct validity, trusted base, own-checker defects |
 | [`THREAT_MODEL.md`](THREAT_MODEL.md) | trust boundaries; the adversary model is deliberately weak |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | the three structural commitments |
+| [`docs/CI.md`](docs/CI.md) | how CI reproduces these checks from a clean checkout |
 | [`docs/PHASE0_GAP_AUDIT.md`](docs/PHASE0_GAP_AUDIT.md) | prior art, duplication analysis, build verdict |
 | `src/scp/` | `transport` · `faultlab` · `arms` · `divergence` · `metrics` · `replay` · `reconstruct` |
 | `results/` | `full_run.txt`, `experiments.json` |

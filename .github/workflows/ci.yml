@@ -1,0 +1,82 @@
+# Reproduces the evidence in CLAIMS.md from a clean checkout.
+#
+# Two things this workflow does deliberately, both explained in docs/CI.md:
+#
+# 1. It does NOT install `omega_seal`. That package is local and private, so a clean
+#    runner exercises the labelled fallback sealer. This was verified to produce
+#    byte-identical measured numbers -- the sealer affects content hashes, not decisions.
+#
+# 2. The final step asserts on the CONTENTS of results/experiments.json, not on the
+#    exit code of the previous step. An exit code is a label: a runner that produced
+#    zero controls would also exit 0. The assertions read the payload the exit code is
+#    supposed to summarise.
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    # Pinned rather than ubuntu-latest: "latest" silently changes the toolchain under a
+    # workflow whose whole job is reproducing fixed numbers.
+    runs-on: ubuntu-24.04
+
+    services:
+      redis:
+        # Same minor as the local container that produced the committed results
+        # (redis-server v=7.4.10).
+        image: redis:7.4-alpine
+        ports:
+          - 6380:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    env:
+      SCP_REDIS_URL: redis://localhost:6380/0
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+
+      - name: Install pinned dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-ci.txt
+          pip install -e . --no-deps
+
+      - name: Record provenance
+        run: |
+          python -VV
+          pip freeze
+          redis-cli -h localhost -p 6380 ping
+          redis-cli -h localhost -p 6380 info server | grep -E 'redis_version'
+          python -c "from scp.ledger import SEALER; print('SEALER =', SEALER)"
+
+      - name: Unit tests
+        run: pytest -q
+
+      - name: Negative controls and full experiment matrix
+        run: python -m scp.experiments --trajectories 500 --steps 20 | tee results/ci_run.txt
+
+      - name: Assert on the evidence, not on the exit code
+        run: python .github/assert_results.py
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: results
+          path: results/

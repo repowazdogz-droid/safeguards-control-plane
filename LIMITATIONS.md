@@ -127,7 +127,38 @@ the negative-control suite or the unit tests, and all are fixed:
    the block denominator counted both while the divergence join deduped — two different
    denominators over the same population. Now deduped by `event_id` on both sides.
 
-A sixth item is a *design* finding rather than a defect, recorded in CLAIMS.md under C2: the
+## 11. Wall-clock deadlines make some counts machine-dependent — NOT FIXED
+
+The in-series gate compares **measured wall-clock latency** (`time.monotonic_ns()`) against
+the 25 ms deadline. Under machine load an event can cross that deadline with **no fault
+injected**, become `NO_DECISION`, and drop out of the set `replay()` admits. Observed: 9,995
+replayable decisions on one loaded run against 10,000 on five others — a 0.05% swing, roughly
+one run in six locally, and likely more often on a shared CI runner.
+
+Consequences, stated plainly:
+
+- **Ratios are stable; counts are not.** Pinned replay agreement held at 100% in every run
+  including the 9,995 one. Disagreement counts (129/125/254) were stable because they depend
+  on the policy and evaluator delta, not on latency. The *denominators* are machine-dependent.
+- CI asserts ratios and disagreement counts, and deliberately does not pin replay
+  denominators. Pinning them would assert something stronger than `CLAIMS.md` claims and would
+  go red for reasons unrelated to correctness.
+- The same sensitivity applies in principle to the E2/E5 enforcement counts, which is why the
+  CI assertions for those are relations rather than exact integers. In practice they were
+  stable across every run.
+
+**The fix, considered and not implemented:** replace wall-clock deadline evaluation with an
+injected logical time source, so deadline crossings are a function of the fault schedule alone
+and every count becomes a hard constant. This was scoped out deliberately — it is an
+implementation refactor, and this artifact is frozen. It is the right change if the work is
+ever resumed.
+
+This limitation was found by the CI assertion script, which classified the replay denominator
+as deterministic and went red. The classification was mine and it was wrong.
+
+---
+
+A further item is a *design* finding rather than a defect, recorded in CLAIMS.md under C2: the
 first version of NC2 asserted the two arms must be identical under a null policy even with
 faults. It failed (46 vs 50 unsafe executed). That was not a confound — it is the fail-closed
 deadline, which belongs to the in-series mechanism and has no monitor counterpart. The

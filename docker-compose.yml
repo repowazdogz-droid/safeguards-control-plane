@@ -1,6 +1,6 @@
 services:
   redis:
-    image: redis:7-alpine
+    image: redis:7.4-alpine   # pinned to match .github/workflows/ci.yml
     container_name: scp-redis
     command: ["redis-server", "--appendonly", "yes"]
     ports: ["6380:6379"]
