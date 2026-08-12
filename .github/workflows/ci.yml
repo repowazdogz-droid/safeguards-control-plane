@@ -57,19 +57,35 @@ jobs:
           pip install -r requirements-ci.txt
           pip install -e . --no-deps
 
+      # `redis-cli` is a redis-tools binary and is NOT installed on the runner. It exists
+      # inside the service container (which is why the health check above works) and on a
+      # developer machine with redis installed locally, so this step passed everywhere
+      # except the one environment that matters. The provenance we actually want -- broker
+      # reachable, and which server version produced the numbers -- is available through
+      # the `redis` client already pinned in requirements-ci.txt, with no system binary.
       - name: Record provenance
         run: |
           python -VV
           pip freeze
-          redis-cli -h localhost -p 6380 ping
-          redis-cli -h localhost -p 6380 info server | grep -E 'redis_version'
+          python - <<'PROV'
+          import os, redis
+          r = redis.from_url(os.environ["SCP_REDIS_URL"])
+          print("PING           =", r.ping())
+          print("redis_version  =", r.info("server")["redis_version"])
+          PROV
           python -c "from scp.ledger import SEALER; print('SEALER =', SEALER)"
 
       - name: Unit tests
         run: pytest -q
 
       - name: Negative controls and full experiment matrix
-        run: python -m scp.experiments --trajectories 500 --steps 20 | tee results/ci_run.txt
+        run: |
+          # results/experiments.json is committed. Remove it first so the assertion step
+          # cannot read the checked-in copy and pass on evidence this run did not produce.
+          # Confirmed by hand: with the committed file in place the assertions return
+          # 20/20 on an empty run; with it absent they exit 1 with an explicit FATAL.
+          rm -f results/experiments.json
+          python -m scp.experiments --trajectories 500 --steps 20 | tee results/ci_run.txt
 
       - name: Assert on the evidence, not on the exit code
         run: python .github/assert_results.py
