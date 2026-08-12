@@ -94,14 +94,23 @@ def main() -> int:
     check("pinned replay has zero disagreements", skew["pinned"]["disagreements"] == 0,
           str(skew["pinned"]["disagreements"]))
 
-    # Disagreement COUNTS are stable across runs (they depend on the policy/evaluator delta,
-    # not on latency); the denominators they sit over are not. Assert the counts.
+    # Disagreement counts depend on the policy/evaluator delta, but only over the events that
+    # stayed replayable. An event that crosses the 25 ms deadline drops out of the set, and if
+    # that event was itself a disagreement the count falls with the denominator. So the count is
+    # stable only CONDITIONAL on a full denominator. Observed directly: denominator 10,000 gives
+    # 125 skewed_evaluator disagreements, denominator 9,999 gives 124.
+    #
+    # The tight invariant is therefore: each dropped event can remove at most one disagreement.
+    FULL = 10_000
     for stratum, expected_disagreements in (("skewed_policy", 129),
                                             ("skewed_evaluator", 125),
                                             ("skewed_both", 254)):
         got = skew[stratum]["disagreements"]
-        check(f"replay {stratum} disagreements", got == expected_disagreements,
-              f"{got} (expected {expected_disagreements}); "
+        _, denom = frac(skew[stratum]["agreement"])
+        dropped = FULL - denom
+        lo, hi = expected_disagreements - dropped, expected_disagreements
+        check(f"replay {stratum} disagreements", lo <= got <= hi,
+              f"{got} (expected {lo}..{hi} for denominator {denom}); "
               f"agreement {skew[stratum]['agreement']}")
         unattributed = skew[stratum]["attribution"].get("UNATTRIBUTED", 0)
         check(f"replay {stratum} fully attributed", unattributed == 0,

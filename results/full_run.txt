@@ -45,7 +45,7 @@ NEGATIVE CONTROLS  --  every checker must be shown capable of failing
 [PASS] NC5 replay-power  (claim C5)
         plants : one recorded decision hand-altered BLOCK<->ALLOW, replayed PINNED
         must   : pinned agreement must be 100% clean, and must DROP on the altered record
-        saw    : clean pinned agreement 9999/9999; after flipping 1 record 9998/9999 (flagged event acbb84ab2b01)
+        saw    : clean pinned agreement 10000/10000; after flipping 1 record 9999/10000 (flagged event acbb84ab2b01)
 
 [PASS] NC6 reconstruction-honesty  (claim C6)
         plants : an incident whose DECISION RECORD is deleted from the ledger
@@ -74,8 +74,8 @@ CONDITION MATRIX
       double_executions: 0
       evaluator_crashes: 0
       broker_redeliveries: 0
-      wall_clock_s: 7.88
-      events_per_s: 1268.5
+      wall_clock_s: 7.36
+      events_per_s: 1357.9
 
   E1_no_faults  [monitor]
       faults: {}
@@ -88,8 +88,8 @@ CONDITION MATRIX
       double_executions: 0
       evaluator_crashes: 0
       broker_redeliveries: 0
-      wall_clock_s: 7.86
-      events_per_s: 1272.5
+      wall_clock_s: 7.35
+      events_per_s: 1361.2
 
   E2_all_faults_failclosed  [in_series]
       faults: {'drop_event': 120, 'duplicate_event': 120, 'reorder_event': 120, 'transport_outage': 120, 'delay_evaluation': 120, 'evaluator_crash': 120, 'evaluator_disagree': 120, 'enforcement_fail': 120, 'telemetry_lie': 120, 'retry_double': 120}
@@ -102,8 +102,8 @@ CONDITION MATRIX
       double_executions: 0
       evaluator_crashes: 120
       broker_redeliveries: 120
-      wall_clock_s: 8.08
-      events_per_s: 1237.3
+      wall_clock_s: 7.64
+      events_per_s: 1309.0
 
   E2_all_faults_failclosed  [monitor]
       faults: {'drop_event': 120, 'duplicate_event': 120, 'reorder_event': 120, 'transport_outage': 120, 'delay_evaluation': 120, 'evaluator_crash': 120, 'evaluator_disagree': 120, 'enforcement_fail': 120, 'telemetry_lie': 120, 'retry_double': 120}
@@ -116,8 +116,8 @@ CONDITION MATRIX
       double_executions: 0
       evaluator_crashes: 120
       broker_redeliveries: 120
-      wall_clock_s: 8.03
-      events_per_s: 1245.0
+      wall_clock_s: 7.58
+      events_per_s: 1319.8
 
   E3_all_faults_failopen  [in_series]
       faults: {'drop_event': 120, 'duplicate_event': 120, 'reorder_event': 120, 'transport_outage': 120, 'delay_evaluation': 120, 'evaluator_crash': 120, 'evaluator_disagree': 120, 'enforcement_fail': 120, 'telemetry_lie': 120, 'retry_double': 120}
@@ -130,8 +130,8 @@ CONDITION MATRIX
       double_executions: 0
       evaluator_crashes: 120
       broker_redeliveries: 120
-      wall_clock_s: 8.13
-      events_per_s: 1229.8
+      wall_clock_s: 7.6
+      events_per_s: 1314.9
 
   E4_no_dedup  [in_series]
       faults: {'drop_event': 120, 'duplicate_event': 120, 'reorder_event': 120, 'transport_outage': 120, 'delay_evaluation': 120, 'evaluator_crash': 120, 'evaluator_disagree': 120, 'enforcement_fail': 120, 'telemetry_lie': 120, 'retry_double': 120}
@@ -144,8 +144,8 @@ CONDITION MATRIX
       double_executions: 110
       evaluator_crashes: 120
       broker_redeliveries: 120
-      wall_clock_s: 8.1
-      events_per_s: 1234.2
+      wall_clock_s: 7.58
+      events_per_s: 1319.3
 
   E5_single_writer  [in_series]
       faults: {'drop_event': 120, 'duplicate_event': 120, 'reorder_event': 120, 'transport_outage': 120, 'delay_evaluation': 120, 'evaluator_crash': 120, 'evaluator_disagree': 120, 'enforcement_fail': 120, 'telemetry_lie': 120, 'retry_double': 120}
@@ -158,8 +158,8 @@ CONDITION MATRIX
       double_executions: 0
       evaluator_crashes: 120
       broker_redeliveries: 120
-      wall_clock_s: 8.12
-      events_per_s: 1231.7
+      wall_clock_s: 7.58
+      events_per_s: 1318.6
 
   E6_two_evaluators  [in_series]
       faults: {'drop_event': 120, 'duplicate_event': 120, 'reorder_event': 120, 'transport_outage': 120, 'delay_evaluation': 120, 'evaluator_crash': 120, 'evaluator_disagree': 120, 'enforcement_fail': 120, 'telemetry_lie': 120, 'retry_double': 120}
@@ -172,8 +172,8 @@ CONDITION MATRIX
       double_executions: 0
       evaluator_crashes: 120
       broker_redeliveries: 120
-      wall_clock_s: 8.24
-      events_per_s: 1214.2
+      wall_clock_s: 7.76
+      events_per_s: 1288.5
 
 ==============================================================================
 VERSION-SKEW REPLAY  (never pooled across strata)
@@ -203,7 +203,7 @@ INCIDENT RECONSTRUCTION
         risk: 0.0
         evaluator_version: eval/1.0
         policy_version: policy/1.0
-        latency_ms: 0.3513
+        latency_ms: 0.3917
         arm: in_series
 
 wrote results/experiments.json

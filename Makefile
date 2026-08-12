@@ -12,6 +12,8 @@ help:
 install:
 	uv venv --python 3.13 .venv
 	uv pip install --python $(PY) -e ".[dev]"
+	# Optional and private to the author's machine. The leading '-' means a clean
+	# clone skips it and uses the labelled fallback sealer; see docs/CI.md.
 	-uv pip install --python $(PY) -e $(HOME)/omega-seal
 
 up:

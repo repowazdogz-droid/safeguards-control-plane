@@ -141,8 +141,9 @@ single-threaded Python loop doing a synchronous broker round-trip per event, not
 
 No failure mode here is novel — A–L are distributed-systems canon. Latency, oversight and
 recovery as challenges for control monitoring are named in Lindner et al.,
-[arXiv:2512.22154](https://arxiv.org/abs/2512.22154) (Google DeepMind); this project
-implements and measures them, it did not identify them. Chaos engineering on agent systems is
+[arXiv:2512.22154](https://arxiv.org/abs/2512.22154), "Practical challenges of control
+monitoring in frontier AI deployments"; this project implements and measures them, it did not
+identify them. Chaos engineering on agent systems is
 established ([AgentChaos, arXiv:2608.06790](https://arxiv.org/abs/2608.06790)) — the difference
 here is the target (the safeguards path, not the LLM API) and the metric (enforcement
 conditional on BLOCK, not task success). The version-skew catalogue is long-term signature

@@ -69,7 +69,7 @@
       "passed": true,
       "plants": "one recorded decision hand-altered BLOCK<->ALLOW, replayed PINNED",
       "must": "pinned agreement must be 100% clean, and must DROP on the altered record",
-      "observed": "clean pinned agreement 9999/9999; after flipping 1 record 9998/9999 (flagged event acbb84ab2b01)"
+      "observed": "clean pinned agreement 10000/10000; after flipping 1 record 9999/10000 (flagged event acbb84ab2b01)"
     },
     {
       "id": "NC6 reconstruction-honesty",
@@ -102,8 +102,8 @@
       "double_executions": 0,
       "evaluator_crashes": 0,
       "broker_redeliveries": 0,
-      "wall_clock_s": 7.88,
-      "events_per_s": 1268.5
+      "wall_clock_s": 7.36,
+      "events_per_s": 1357.9
     },
     {
       "condition": "E1_no_faults",
@@ -118,8 +118,8 @@
       "double_executions": 0,
       "evaluator_crashes": 0,
       "broker_redeliveries": 0,
-      "wall_clock_s": 7.86,
-      "events_per_s": 1272.5
+      "wall_clock_s": 7.35,
+      "events_per_s": 1361.2
     },
     {
       "condition": "E2_all_faults_failclosed",
@@ -145,8 +145,8 @@
       "double_executions": 0,
       "evaluator_crashes": 120,
       "broker_redeliveries": 120,
-      "wall_clock_s": 8.08,
-      "events_per_s": 1237.3
+      "wall_clock_s": 7.64,
+      "events_per_s": 1309.0
     },
     {
       "condition": "E2_all_faults_failclosed",
@@ -172,8 +172,8 @@
       "double_executions": 0,
       "evaluator_crashes": 120,
       "broker_redeliveries": 120,
-      "wall_clock_s": 8.03,
-      "events_per_s": 1245.0
+      "wall_clock_s": 7.58,
+      "events_per_s": 1319.8
     },
     {
       "condition": "E3_all_faults_failopen",
@@ -199,8 +199,8 @@
       "double_executions": 0,
       "evaluator_crashes": 120,
       "broker_redeliveries": 120,
-      "wall_clock_s": 8.13,
-      "events_per_s": 1229.8
+      "wall_clock_s": 7.6,
+      "events_per_s": 1314.9
     },
     {
       "condition": "E4_no_dedup",
@@ -226,8 +226,8 @@
       "double_executions": 110,
       "evaluator_crashes": 120,
       "broker_redeliveries": 120,
-      "wall_clock_s": 8.1,
-      "events_per_s": 1234.2
+      "wall_clock_s": 7.58,
+      "events_per_s": 1319.3
     },
     {
       "condition": "E5_single_writer",
@@ -253,8 +253,8 @@
       "double_executions": 0,
       "evaluator_crashes": 120,
       "broker_redeliveries": 120,
-      "wall_clock_s": 8.12,
-      "events_per_s": 1231.7
+      "wall_clock_s": 7.58,
+      "events_per_s": 1318.6
     },
     {
       "condition": "E6_two_evaluators",
@@ -280,8 +280,8 @@
       "double_executions": 0,
       "evaluator_crashes": 120,
       "broker_redeliveries": 120,
-      "wall_clock_s": 8.24,
-      "events_per_s": 1214.2
+      "wall_clock_s": 7.76,
+      "events_per_s": 1288.5
     }
   ],
   "version_skew": {

@@ -35,8 +35,14 @@ monitor arm prevents nothing (`0/818`).
 **Clock-sensitive** — asserted as relations or as counts that do not depend on latency. The
 in-series gate compares measured wall-clock latency against a 25 ms deadline, so under load an
 event can cross it with no fault injected and drop out of the replayable set. Replay
-*denominators* therefore vary by machine (9,995 observed once, 10,000 on five other runs) while
-*ratios* and *disagreement counts* stay fixed. CI asserts the ratio, not the denominator.
+*denominators* therefore vary by machine (9,995 and 9,999 observed, 10,000 on most runs).
+
+Disagreement *counts* are stable only conditional on a full denominator, which an earlier version
+of this document got wrong. If the event that dropped out was itself a disagreement, the count
+falls with it: denominator 10,000 gives 125 `skewed_evaluator` disagreements and denominator 9,999
+gives 124, both observed directly. CI therefore asserts the ratio for the pinned stratum, and for
+the skewed strata asserts the count within the band the denominator allows, since each dropped
+event can remove at most one disagreement.
 
 Pinning the denominator would assert something stronger than `CLAIMS.md` claims and would go
 red for reasons unrelated to correctness. See `LIMITATIONS.md` §11 for the unimplemented fix
