@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using these metadata."
+type: software
+title: safeguards-control-plane
+abstract: "A safeguards system whose telemetry and whose enforcement record come from the same writer cannot detect its own enforcement failures."
+authors:
+  - family-names: Smith
+    given-names: Warren
+version: 0.1.0
+license: MIT
+repository-code: "https://github.com/repowazdogz-droid/safeguards-control-plane"
+keywords:
+  - agent-safeguards
+  - ai-safety
+  - fault-injection
+  - redis-streams
+  - reproducible-research
