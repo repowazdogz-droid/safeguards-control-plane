@@ -20,6 +20,12 @@ on:
 permissions:
   contents: read
 
+# Explicit `shell: bash` runs steps as `bash -eo pipefail`. The implicit `bash -e` has no
+# pipefail, so `scp.experiments | tee` would exit with tee's status if the experiment failed.
+defaults:
+  run:
+    shell: bash
+
 jobs:
   verify:
     # Pinned rather than ubuntu-latest: "latest" silently changes the toolchain under a

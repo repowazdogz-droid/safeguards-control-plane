@@ -3,6 +3,7 @@
 A safeguards system whose telemetry and whose enforcement record come from the same writer cannot detect its own enforcement failures.
 
 [![CI](https://img.shields.io/github/actions/workflow/status/repowazdogz-droid/safeguards-control-plane/ci.yml?branch=master&label=CI)](https://github.com/repowazdogz-droid/safeguards-control-plane/actions/workflows/ci.yml)
+[![release](https://img.shields.io/github/v/release/repowazdogz-droid/safeguards-control-plane)](https://github.com/repowazdogz-droid/safeguards-control-plane/releases)
 
 ## Try it
 
